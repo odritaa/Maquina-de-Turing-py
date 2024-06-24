@@ -2,13 +2,13 @@
 
 Trabajo Práctico "Figuritas"
 
-El trabajo práctico consta de interpretar los comandos para dibujar figuras geométricas en el plano. Las siguientes funciones dibujan un gráfico:
+1) El trabajo práctico consta de interpretar los comandos para dibujar figuras geométricas en el plano. Las siguientes funciones dibujan un gráfico:
 
 --> circle r:dibuja un círculo de radio r con centro en las coordenadas (0,0) retornando un círculo.
 
 --> box ancho alto:dibuja un rectángulo con una esquina en (0,0) y la opuesta en (ancho,alto), retornando un rectángulo.
 
-Las siguientes funciones reciben un objeto gráfico como parámetro. Su resultado es el gráfico modificado según se indica:
+2) Las siguientes funciones reciben un objeto gráfico como parámetro. Su resultado es el gráfico modificado según se indica:
 
 --> move dx dy g : Desplaza el gráfico g una distancia dx sobre el eje x y dy sobre el eje y.
 
