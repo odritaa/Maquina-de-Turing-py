@@ -20,10 +20,10 @@ class TuringMachine:
         Realiza una transicion de estado basada en el caracter de entrada.
 
         Args:
-            input_char (str): Caracter ingresado por el usuario.
+            input_char (str):Caracter ingresado por el usuario.
 
         Returns:
-            bool: True si la transicion es valida, False si no lo es.
+            bool:True si la transicion es valida, False si no lo es.
         """
         #Se simula el comportamiento de una maquina de Turing, evalua cada caracter de entrada en self.states.
         if input_char in self.states[self.current_state]:
@@ -42,8 +42,8 @@ class TuringMachine:
         Dibuja un rectangulo en base al ancho y alto dados.
 
         Args:
-            ancho (float): Ancho del rectangulo.
-            alto (float): Alto del rectangulo.
+            ancho (float):Ancho del rectangulo.
+            alto (float):Alto del rectangulo.
         """
         fig, ax = plt.subplots()
 
