@@ -4,7 +4,7 @@ import matplotlib.patches as patches
 class Circulo:
     def __init__(self):
         """
-        Inicializa la maquina de Turing para reconocer la palabra 'circle'.
+        Inicializa la maquina Turing con los estados para reconocer de la palabra 'circle'.
         Define los estados y transiciones necesarios.
         """
         self.states = {
@@ -13,52 +13,43 @@ class Circulo:
             2: {'r': (3, 'R')},
             3: {'c': (4, 'R')},
             4: {'l': (5, 'R')},
-            5: {'e': (6, 'R')},
+            5: {'e': (6, 'R')}
         }
-        self.head_position = 0
         self.state = 0
 
-    def step(self, input_char):
+    def process_word(self, word):
         """
-        Realiza una transicion de estado basada en el caracter de entrada.
+        Procesa una palabra ingresada por el usuario.
 
         Args:
-            input_char (str):Caracter ingresado por el usuario.
+            word (str):Palabra ingresada.
 
         Returns:
-            bool:True si la transicion es valida, False si no lo es.
+            bool: "True" si la palabra es correcta, "False" si no lo es.
         """
-        #Se simula el comportamiento de una maquina de Turing, evalua cada caracter de entrada en self.states
-        if input_char in self.states[self.state]:
-            next_state, direction = self.states[self.state][input_char]
-            if direction == 'R':
-                self.head_position += 1
-            elif direction == 'L':
-                self.head_position -= 1
-            self.state = next_state
-            return True
-        else:
-            return False
+        for char in word:
+            if self.state in self.states and char in self.states[self.state]:
+                next_state, direction = self.states[self.state][char]
+                print(f"Transicion: estado {self.state} -> {next_state} con '{char}'")
+                self.state = next_state
+            else:
+                print(f"Error: '{char}' no es valido en el estado {self.state}")
+                return False
+        return self.state == 6
 
-    def draw_circle(self, progress, r):
+    def draw_circle(self, r):
         """
-        Se dibuja un arco de circulo en funcion del progreso.
+        Dibuja un circulo.
 
         Args:
-            progress (int):Numero de letras correctas ingresadas.
-            r (float):Radio del circulo.
+            r (float): Radio del circulo.
         """
         #Creamos la figura y un eje
         fig, ax = plt.subplots()
 
-        if progress > 0:
-            theta1 = 0 #Es el angulo medido en grados o radianes.
-            theta2 = (progress / 6) * 360 
-            #Se muestra el proceso del mismo, en donde los 360 grados corresponden a 6 letras
-        
-            #Se crea un arco que representa el progreso del circulo con patches.Arc
-            arc = patches.Arc((0, 0), 2*r, 2*r, angle=0, theta1=theta1, theta2=theta2, edgecolor='magenta')
-            ax.add_patch(arc)
+        #Se crea un circulo con patches.Circle
+        circle = patches.Circle((0, 0), r, edgecolor='magenta', facecolor='none')
+        ax.add_patch(circle)
 
         #Establecemos los limites
         ax.set_xlim(-r-1, r+1)
@@ -73,7 +64,7 @@ class Circulo:
         ax.grid(color='gray', linestyle='--', linewidth=0.5)
 
         #Mostramos el grafico
-        plt.title(f'El circulo cuenta con radio de {r}. Completa el proceso {progress}/6')
+        plt.title(f'El circulo cuenta con un radio de {r}.')
         plt.xlabel('X')
         plt.ylabel('Y')
         plt.show()
@@ -81,25 +72,16 @@ class Circulo:
 def main():
     c = Circulo()
     r = 5  #Radio del circulo
-    progress = 0  #Inicializamos el progreso 
 
-    while c.state != 6:
-        input_char = input(f"Ingresa la letra numero {progress + 1}: ").lower()
+    input_word = input("Ingresa la palabra: ").lower()
 
-        #Se actualiza visualmente el avance del crculo y se gestiona la deteccion de errores durante el proceso.
-        if c.step(input_char): 
-            progress += 1
-            if c.state ==6:
-                c.draw_circle(progress, r)
-        else:
-            print("LO SIENTO, la letra es incorrecta :c")
-            break
-
-    if c.state == 6:
-        print("¡HAZ COMPLETADO EL CIRCULO, FELICITACIONES!")
+    #Se verifica si la palabra ingresada es correcta y se visualiza el circulo
+    if c.process_word(input_word):
+        print("¡LOGRASTE COMPLETAR EL CIRCULO, FELICITACIONES!")
+        c.draw_circle(r)
     else:
+        print("LO SIENTO, la palabra es incorrecta :c")
         print("El circulo no se pudo completar. ¡Volve a intentarlo!")
-        
 
 if __name__ == "__main__":
     main()
