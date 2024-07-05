@@ -141,7 +141,7 @@ def main():
             c.show_circles(circles)
 
         elif choice == '4':
-            print("ヘ(^_^ヘ)Saliendo del programa...")
+            print("ヘ(^_^ヘ)CHAUUU...")
             break
 
         else:
