@@ -10,11 +10,10 @@ class shapes():
         self.alto = 0
         self.nombre = ""
         self.state = 0
+        self.pos = 0,0
+        self.angulo = 0
 
     def automata(self,word):
-        x = 0
-        y = 0
-        a = 0
         word_sep = word.split()
         self.nombre = word_sep[-1]
         for part in word_sep:
@@ -68,7 +67,6 @@ class shapes():
                             self.ancho = char
                             self.state += 1
                             continue
-
                 if self.state == 11:
                     if char.isnumeric():
                         if len(part) == 2:
@@ -91,21 +89,23 @@ class shapes():
                 if self.state == 16:
                     if char.isnumeric():
                         if len(part) == 2:
-                            x = char + part[part.index(char) + 1]
+                            self.x = char + part[part.index(char) + 1]
                             self.state += 1
                             continue
                         else:
-                            x = char
+                            self.x = char
                             self.state += 1
                             continue
                 if self.state == 17:
+                    if len(self.x) == 2:
+                        continue
                     if char.isnumeric():
                         if len(part) == 2:
-                            y = char + part[part.index(char) + 1]
+                            self.y = char + part[part.index(char) + 1]
                             self.state += 1
                             continue
                         else:
-                            y = char
+                            self.y = char
                             self.state += 1
                             continue
                 if self.state == 19:
@@ -123,21 +123,23 @@ class shapes():
                 if self.state == 23:
                     if char.isnumeric():
                         if len(part) == 2:
-                            x = char + part[part.index(char) + 1]
+                            self.x = char + part[part.index(char) + 1]
                             self.state += 1
                             continue
                         else:
-                            x = char
+                            self.x = char
                             self.state += 1
                             continue
                 if self.state == 24:
+                    if len(self.x) == 2:
+                        continue
                     if char.isnumeric():
                         if len(part) == 2:
-                            y = char + part[part.index(char) + 1]
+                            self.y = char + part[part.index(char) + 1]
                             self.state += 1
                             continue
                         else:
-                            y = char
+                            self.y = char
                             self.state += 1
                             continue
                 if self.state == 25:
@@ -158,48 +160,107 @@ class shapes():
                 if self.state == 30:
                     if char.isnumeric():
                         if len(part) == 2:
-                            a = char  + part[part.index(char) +1] + '0'
+                            self.a = char  + part[part.index(char) +1] + '0'
                         else:
-                            a = char + '0'
+                            self.a = char + '0'
                         self.state += 1
 
-        print(self.state)
 
 
         if self.state == 7 and int(self.radio) > 0 and self.nombre != "":
             return True
         elif self.state == 12 and int(self.ancho) > 0 and int(self.alto) > 0 and self.nombre != "":
             return True
-        elif self.state == 18 and int(x) > 0 and int(y) > 0 and self.nombre != "":
-            return x,y,True
-        elif self.state == 25 and int(x) > 0 and int(y) > 0 and self.nombre != "":
-            return x,y,True
-        if self.state == 31 and int(a) > 0 and self.nombre != "":
-            return a,True
+        elif self.state == 18 and int(self.x) > 0 and int(self.y) > 0 and self.nombre != "":
+            return True
+        elif self.state == 25 and int(self.x) > 0 and int(self.y) > 0 and self.nombre != "":
+            return True
+        if self.state == 31 and int(self.a) > 0 and self.nombre != "":
+            return True
         else:
             return False
+
+    def draw(self, shapes):
+        fig, ax = plt.subplots()
+
+        colors = [plt.cm.viridis(i) for i in np.linspace(0, 1, len(shapes))]
+        idx = 0
+        for shape in shapes:
+            if int(shape.radio) > 0:
+                r = int(shape.radio)
+                name = shape.nombre
+                color = colors[idx]
+                pos = shape.pos
+                circle = patches.Circle(pos, r, edgecolor=color, facecolor='none')
+                ax.add_patch(circle)
+                ax.text(pos[0], pos[1], name, ha='center', va='center', fontsize=10, color=color)
+                idx += 1
+            else:
+                w = int(shape.ancho)
+                l = int(shape.alto)
+                name = shape.nombre
+                pos = shape.pos
+                color = colors[idx]
+                r = patches.Rectangle((pos[0], pos[1]), w, l, edgecolor=color, facecolor='none')
+                r = plt.transforms.Affine2D().rotate_deg(self.a) + ax.transData
+                ax.add_patch(r)
+                ax.text(pos[0] + w / 2, pos[1] + l / 2, name, ha='center', va='center', fontsize=10, color=color)
+                idx += 1
+
+        # Configura el grafico
+        ax.set_xlim(-50, 50)
+        ax.set_ylim(-50, 50)
+        ax.set_aspect('equal', 'box')
+
+        # Agregamos las lineas de los ejes
+        ax.axhline(0, color='black', linewidth=0.5)
+        ax.axvline(0, color='black', linewidth=0.5)
+
+        # Tambien incorporamos una cuadricula
+        ax.grid(color='gray', linestyle='--', linewidth=0.5)
+
+        # Muestra el grafico
+        plt.title('( ^ω^) TODAS TUS FORMAS ( ^ω^)')
+        plt.xlabel('X')
+        plt.ylabel('Y')
+        plt.show()
+    def rotate(self,a):
+        self.a = a
+        print("banana")
+    def move(self,x,y):
+        self.pos = x,y
+        print("banana")
+    def scale(self,x,y):
+        print("banana")
+
+
+
+
 
 
 
 
 
 def main():
-    word = "move 9 8 nashe"
-    fprmitas = []
+    word = "circle 9 nashe"
+    test = "box 5 5 nashe"
+    formitas = []
     c = shapes()
-    print(c.automata(word))
-    # circle3 = plt.Circle((0, 0), int(c.radio))
-    #
-    # fig, ax = plt.subplots()  # note we must use plt.subplots, not plt.subplot
-    # # (or if you have an existing figure)
-    # # fig = plt.gcf()
-    # # ax = fig.gca()
-    # ax.set_xlim(-50, 50)
-    # ax.set_ylim(-50, 50)
-    # ax.set_aspect('equal', 'box')
-    #
-    # ax.add_patch(circle3)
-    # plt.show()
+    if (c.automata(word) == True):
+        formitas.append(c)
+    c = shapes()
+    if (c.automata(test) == True):
+        formitas.append(c)
+    print(c.ancho)
+    print(c.alto)
+    c.draw(formitas)
+    c.move(5,5)
+    c.rotate(45)
+    c.draw(formitas)
+
+
+
+
 
 
 if __name__ == "__main__":
