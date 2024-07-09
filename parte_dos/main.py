@@ -12,11 +12,23 @@ class shapes():
         self.state = 0
         self.pos = 0,0
         self.angulo = 0
+        self.x = 0
+        self.y = 0
+
+    def __repr__(self):
+        return "Test()"
+
+    def __str__(self):
+        print("nombre: " + self.nombre)
+        print("radio: " + str(self.radio))
+        print("ancho: " + str(self.ancho))
+        print("alto: " + str(self.alto))
+        return 'a'
+
 
     def automata(self,word):
         salto = True
         word_sep = word.split()
-        self.nombre = word_sep[-1]
         for part in word_sep:
             for char in part:
                 if self.state == 0:
@@ -166,23 +178,28 @@ class shapes():
                 if self.state == 30:
                     if char.isnumeric():
                         if len(part) == 2:
-                            self.a = char  + part[part.index(char) +1] + '0'
+                            self.angulo = char  + part[part.index(char) +1]
                         else:
-                            self.a = char + '0'
+                            self.angulo = char
                         self.state += 1
 
 
 
-        if self.state == 7 and int(self.radio) > 0 and self.nombre != "":
-            return 7
-        elif self.state == 12 and int(self.ancho) > 0 and int(self.alto) > 0 and self.nombre != "":
-            return 12
-        elif self.state == 18 and int(self.x) > 0 and int(self.y) > 0 and self.nombre != "":
-            return 18
-        elif self.state == 25 and int(self.x) > 0 and int(self.y) > 0 and self.nombre != "":
-            return 25
-        if self.state == 31 and int(self.a) > 0 and self.nombre != "":
-            return 31
+        if self.state == 7 and int(self.radio) > 0:
+            self.nombre = word_sep[-1]
+            return 7,self.nombre
+        elif self.state == 12 and int(self.ancho) > 0 and int(self.alto) > 0:
+            self.nombre = word_sep[-1]
+            return 12,self.nombre
+        elif self.state == 18 and int(self.x) > 0 and int(self.y) > 0:
+            self.nombre = word_sep[-1]
+            return 18,self.x,self.y,self.nombre
+        elif self.state == 25 and int(self.x) > 0 and int(self.y) > 0:
+            self.nombre = word_sep[-1]
+            return 25, self.x, self.y, self.nombre
+        if self.state == 31 and int(self.angulo) > 0:
+            self.nombre = word_sep[-1]
+            return 31, self.angulo,self.nombre
         else:
             return False
 
@@ -197,7 +214,7 @@ class shapes():
                 name = shape.nombre
                 color = colors[idx]
                 pos = shape.pos
-                circle = patches.Circle(pos, r, edgecolor=color, facecolor='none')
+                circle = patches.Circle(pos, r, edgecolor=color,angle=int(self.angulo))
                 ax.add_patch(circle)
                 ax.text(pos[0], pos[1], name, ha='center', va='center', fontsize=10, color=color)
                 idx += 1
@@ -207,7 +224,7 @@ class shapes():
                 name = shape.nombre
                 pos = shape.pos
                 color = colors[idx]
-                r = patches.Rectangle((pos[0], pos[1]), w, l, edgecolor=color, facecolor='none', angle=int(self.angulo))
+                r = patches.Rectangle((pos[0], pos[1]), w, l, edgecolor=color, angle=int(self.angulo))
                 ax.add_patch(r)
                 ax.text(pos[0] + w / 2, pos[1] + l / 2, name, ha='center', va='center', fontsize=10, color=color)
                 idx += 1
@@ -232,10 +249,10 @@ class shapes():
     def rotate(self,a):
         self.angulo = a
     def move(self,x,y):
-        self.pos = x,y
+        self.pos = int(x),int(y)
     def scale(self,x,y):
-        self.ancho = int(self.ancho) * x
-        self.alto = int(self.alto) * y
+        self.ancho = int(self.ancho) * int(x)
+        self.alto = int(self.alto) * int(y)
         if int(self.radio) > 0:
             self.radio = int(self.radio) * x
 
@@ -248,14 +265,39 @@ class shapes():
 
 
 def main():
+    formas = []
     while True:
-        word = "box 10 10 nashe"
-        formitas = []
-        c = shapes()
-        if (c.automata(word) == 12):
-            formitas.append(c)
-        c.scale(2,2)
-        c.draw(formitas)
+        s = shapes()
+        print("Lista de comandos UWU: ")
+        print("-circle r g")
+        print("-box x y g")
+        print("-move x y g")
+        print("-scale x y g")
+        print("-rotate x y g")
+        print("-show")
+        wor = input("Ingrese el comando que desea ejecutar: ")
+        x = s.automata(wor)
+        if wor == "show":
+            s.draw(formas)
+            continue
+        if x == False:
+            print("Expresion no aceptada")
+            continue
+        if x[0] == 7 or 12: #circle y box
+            formas.append(s)
+        if x[0] == 18: #move
+            for forma in formas:
+                if forma.nombre == x[-1]:
+                    forma.move(x[1],x[2])
+        if x[0] == 25: #scale
+            for forma in formas:
+                if forma.nombre == x[-1]:
+                    forma.scale(x[1],x[2])
+        if x[0] == 31: #rotate
+            for forma in formas:
+                if forma.nombre == x[-1]:
+                    forma.rotate(x[1])
+
 
 
 
