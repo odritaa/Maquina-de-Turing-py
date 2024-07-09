@@ -14,6 +14,7 @@ class shapes():
         self.angulo = 0
 
     def automata(self,word):
+        salto = True
         word_sep = word.split()
         self.nombre = word_sep[-1]
         for part in word_sep:
@@ -69,6 +70,9 @@ class shapes():
                             continue
                 if self.state == 11:
                     if char.isnumeric():
+                        if len(self.ancho) == 2 and salto:
+                            salto = False
+                            continue
                         if len(part) == 2:
                             self.alto = char + part[part.index(char) + 1]
                             self.state += 1
@@ -97,7 +101,8 @@ class shapes():
                             self.state += 1
                             continue
                 if self.state == 17:
-                    if len(self.x) == 2:
+                    if len(self.x) == 2 and salto:
+                        salto = False
                         continue
                     if char.isnumeric():
                         if len(part) == 2:
@@ -131,7 +136,8 @@ class shapes():
                             self.state += 1
                             continue
                 if self.state == 24:
-                    if len(self.x) == 2:
+                    if len(self.x) == 2 and salto:
+                        salto = False
                         continue
                     if char.isnumeric():
                         if len(part) == 2:
@@ -168,15 +174,15 @@ class shapes():
 
 
         if self.state == 7 and int(self.radio) > 0 and self.nombre != "":
-            return True
+            return 7
         elif self.state == 12 and int(self.ancho) > 0 and int(self.alto) > 0 and self.nombre != "":
-            return True
+            return 12
         elif self.state == 18 and int(self.x) > 0 and int(self.y) > 0 and self.nombre != "":
-            return True
+            return 18
         elif self.state == 25 and int(self.x) > 0 and int(self.y) > 0 and self.nombre != "":
-            return True
+            return 25
         if self.state == 31 and int(self.a) > 0 and self.nombre != "":
-            return True
+            return 31
         else:
             return False
 
@@ -201,8 +207,7 @@ class shapes():
                 name = shape.nombre
                 pos = shape.pos
                 color = colors[idx]
-                r = patches.Rectangle((pos[0], pos[1]), w, l, edgecolor=color, facecolor='none')
-                r = plt.transforms.Affine2D().rotate_deg(self.a) + ax.transData
+                r = patches.Rectangle((pos[0], pos[1]), w, l, edgecolor=color, facecolor='none', angle=int(self.angulo))
                 ax.add_patch(r)
                 ax.text(pos[0] + w / 2, pos[1] + l / 2, name, ha='center', va='center', fontsize=10, color=color)
                 idx += 1
@@ -225,13 +230,14 @@ class shapes():
         plt.ylabel('Y')
         plt.show()
     def rotate(self,a):
-        self.a = a
-        print("banana")
+        self.angulo = a
     def move(self,x,y):
         self.pos = x,y
-        print("banana")
     def scale(self,x,y):
-        print("banana")
+        self.ancho = int(self.ancho) * x
+        self.alto = int(self.alto) * y
+        if int(self.radio) > 0:
+            self.radio = int(self.radio) * x
 
 
 
@@ -242,21 +248,14 @@ class shapes():
 
 
 def main():
-    word = "circle 9 nashe"
-    test = "box 5 5 nashe"
-    formitas = []
-    c = shapes()
-    if (c.automata(word) == True):
-        formitas.append(c)
-    c = shapes()
-    if (c.automata(test) == True):
-        formitas.append(c)
-    print(c.ancho)
-    print(c.alto)
-    c.draw(formitas)
-    c.move(5,5)
-    c.rotate(45)
-    c.draw(formitas)
+    while True:
+        word = "box 10 10 nashe"
+        formitas = []
+        c = shapes()
+        if (c.automata(word) == 12):
+            formitas.append(c)
+        c.scale(2,2)
+        c.draw(formitas)
 
 
 
